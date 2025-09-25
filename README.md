@@ -10,7 +10,7 @@ Verit is an AI-powered image authenticity and scam detection platform designed t
 
 Verit is designed for hybrid cloud deployment using:
 - **Google Cloud Vision API:** Set up a Google Cloud Project, enable the Vision API, and obtain an API key for advanced image analysis.
-- **AWS ECS with EBS Volume:** The backend is containerized and deployed on AWS Elastic Container Service (ECS), with persistent storage managed via Elastic Block Store (EBS).
+- **AWS EC2 with EBS Volume:** The backend is containerized and deployed on AWS Elastic Compute Cloud (EC2), with persistent storage managed via Elastic Block Store (EBS).
 
 This approach ensures high availability, scalability, and resilience, allowing organizations to leverage both Google Cloud's AI capabilities and AWS's robust infrastructure.
 
@@ -85,7 +85,7 @@ git clone https://github.com/yourusername/verit-scanner.git
 ### Deploy on your preferred cloud
 
 - Set up a Google Cloud Project, enable the Vision API, and obtain an API key.
-- Deploy the backend on AWS ECS with EBS volume for persistent storage.
+- Deploy the backend on AWS EC2 with EBS volume for persistent storage.
 
 ### Run locally
 
