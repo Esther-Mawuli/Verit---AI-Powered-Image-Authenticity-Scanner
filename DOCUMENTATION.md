@@ -8,7 +8,11 @@ Verit is an AI-powered image authenticity and scam detection platform designed t
 
 ## Multi-Cloud Deployment
 
-Verit is architected for multi-cloud deployment, supporting AWS, Azure, and Google Cloud. This flexibility ensures high availability, scalability, and resilience, allowing organizations to deploy Verit wherever their infrastructure resides. The included Terraform scripts and Docker support make it easy to launch Verit on any major cloud provider.
+Verit is designed for hybrid cloud deployment using:
+- **Google Cloud Vision API:** Set up a Google Cloud Project, enable the Vision API, and obtain an API key for advanced image analysis.
+- **AWS ECS with EBS Volume:** The backend is containerized and deployed on AWS Elastic Container Service (ECS), with persistent storage managed via Elastic Block Store (EBS).
+
+This approach ensures high availability, scalability, and resilience, allowing organizations to leverage both Google Cloud's AI capabilities and AWS's robust infrastructure.
 
 ---
 
@@ -33,7 +37,7 @@ Verit is architected for multi-cloud deployment, supporting AWS, Azure, and Goog
 - **Fraud Reduction:** Companies in e-commerce, real estate, and recruitment can reduce losses and protect their customers by integrating Verit into their platforms.
 - **Brand Trust:** By proactively fighting scams and misinformation, organizations build trust and credibility with their users.
 - **Regulatory Compliance:** Verit helps companies meet growing regulatory requirements for content authenticity and user protection.
-- **Scalable Security:** Multi-cloud deployment ensures Verit can scale with business needs and remain resilient against attacks.
+- **Scalable Security:** Hybrid cloud deployment ensures Verit can scale with business needs and remain resilient against attacks.
 
 ---
 
@@ -74,8 +78,8 @@ git clone https://github.com/yourusername/verit-scanner.git
 ```
 
 ### Deploy on your preferred cloud:
-- Use the included Terraform scripts for AWS.
-- Docker and Kubernetes support for Azure/GCP coming soon.
+- Set up a Google Cloud Project, enable the Vision API, and obtain an API key.
+- Deploy the backend on AWS ECS with EBS volume for persistent storage.
 
 ### Run locally:
 ```bash
