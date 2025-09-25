@@ -1,0 +1,25 @@
+# Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+env/
+venv/
+# VS Code settings
+.vscode/
+# OS files
+.DS_Store
+Thumbs.db
+# Logs
+*.log
+# Terraform state files
+*.tfstate
+*.tfstate.*
+.terraform/
+# Jupyter Notebooks
+.ipynb_checkpoints/
+# Misc
+*.bak
+*.swp

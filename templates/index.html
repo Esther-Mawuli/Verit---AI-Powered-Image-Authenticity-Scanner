@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verit - AI-Powered Image Authenticity Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #6b7280;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--gradient);
+            color: white;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .upload-area.active {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .risk-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .risk-high { border-left: 6px solid var(--danger); }
+        .risk-medium { border-left: 6px solid var(--warning); }
+        .risk-low { border-left: 6px solid var(--secondary); }
+
+        .risk-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .badge-high { background: #fee2e2; color: var(--danger); }
+        .badge-medium { background: #fef3c7; color: var(--warning); }
+        .badge-low { background: #d1fae5; color: var(--secondary); }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .type-exact { background: #d1fae5; color: var(--secondary); }
+        .type-page { background: #e0e7ff; color: var(--primary); }
+        .type-similar { background: #fef3c7; color: var(--warning); }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e7ff;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: var(--light);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .contact-info {
+            list-style: none;
+        }
+
+        .contact-info li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-shield-check"></i>
+                    VERIT
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Protect Yourself from Image Scams</h1>
+            <p>AI-powered image verification to detect fake listings, scams, and misinformation</p>
+            <div class="upload-section">
+                <h2><i class="fas fa-camera"></i> Scan an Image for Authenticity</h2>
+                <p>Upload any image to check if it's being used in scams or fake listings</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Drop your image here or click to browse</h3>
+                    <p>Supports JPG, PNG, WebP (Max 10MB)</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <button class="btn" id="scanButton" disabled>
+                    <i class="fas fa-search"></i> Scan Image for Scams
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Animation -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <h3>Analyzing Image...</h3>
+        <p>Scanning across millions of web pages for matches</p>
+    </div>
+
+    <!-- Results Section -->
+    <section class="container results-section" id="resultsSection">
+        <div class="risk-card" id="riskCard">
+            <h2><i class="fas fa-shield-alt"></i> Security Analysis</h2>
+            <div id="riskContent"></div>
+        </div>
+
+        <div class="results-grid" id="resultsGrid">
+            <!-- Results will be populated here -->
+        </div>
+
+        <div class="result-card">
+            <h3><i class="fas fa-info-circle"></i> Image Metadata</h3>
+            <pre id="metadataDisplay"></pre>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Why Choose Verit?</h2>
+            <p style="text-align: center; color: var(--gray); max-width: 600px; margin: 0 auto 2rem;">
+                Advanced AI technology to protect you from online scams and fake content
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot feature-icon"></i>
+                    <h3>AI-Powered Detection</h3>
+                    <p>Uses Google Vision AI to scan millions of web pages instantly</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bolt feature-icon"></i>
+                    <h3>Real-Time Analysis</h3>
+                    <p>Get results in seconds with comprehensive security reports</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3>Risk Scoring</h3>
+                    <p>Intelligent scoring system to evaluate scam probability</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-globe feature-icon"></i>
+                    <h3>Global Database</h3>
+                    <p>Compares against images from across the entire internet</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-shield-check"></i> Verit</h3>
+                    <p>AI-powered image authenticity verification to protect users from online scams and misinformation.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> hello@verit.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-VERIT</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Accra, Ghana</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="contact-info">
+                        <li><a href="#features" style="color: white; text-decoration: none;">Features</a></li>
+                        <li><a href="#how-it-works" style="color: white; text-decoration: none;">How It Works</a></li>
+                        <li><a href="#contact" style="color: white; text-decoration: none;">Contact</a></li>
+                        <li><a href="#" style="color: white; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #374151;">
+                <p>&copy; 2024 Verit. All rights reserved. Built with ❤️ in Ghana</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const scanButton = document.getElementById('scanButton');
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('resultsSection');
+        const riskCard = document.getElementById('riskCard');
+        const riskContent = document.getElementById('riskContent');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const metadataDisplay = document.getElementById('metadataDisplay');
+
+        let selectedFile = null;
+
+        // Event Listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+        scanButton.addEventListener('click', uploadFile);
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('active');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('active');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFiles(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files[0]);
+            }
+        }
+
+        function handleFiles(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, WebP)');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                return;
+            }
+
+            selectedFile = file;
+            scanButton.disabled = false;
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle upload-icon" style="color: var(--secondary);"></i>
+                <h3>${file.name}</h3>
+                <p>${(file.size / 1024 / 1024).toFixed(2)} MB - Ready to scan</p>
+            `;
+        }
+
+        async function uploadFile() {
+            if (!selectedFile) return;
+
+            // Show loading
+            loading.style.display = 'block';
+            resultsSection.style.display = 'none';
+            scanButton.disabled = true;
+            scanButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                loading.style.display = 'none';
+                scanButton.disabled = false;
+                scanButton.innerHTML = '<i class="fas fa-search"></i> Scan Image for Scams';
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    throw new Error(data.error || 'Scan failed');
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                scanButton.disabled = false;
+                scanButton.innerHTML = '<i class="fas fa-search"></i> Scan Image for Scams';
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function displayResults(data) {
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Display metadata
+            metadataDisplay.textContent = JSON.stringify(data.metadata, null, 2);
+
+            // Display risk analysis
+            displayRiskAnalysis(data.similarity_metrics, data.scam_report, data.domain_analysis);
+
+            // Display search results
+            displaySearchResults(data.reverseSearchResults);
+        }
+
+        function displayRiskAnalysis(metrics, report, domains) {
+            const riskClass = report.risk_level.toLowerCase();
+            const badgeClass = `badge-${riskClass}`;
+            
+            riskCard.className = `risk-card risk-${riskClass}`;
+            riskContent.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <span class="risk-badge ${badgeClass}">${report.risk_level} RISK</span>
+                    <span>Confidence: ${metrics.confidence}</span>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <h3>Similarity Score: ${metrics.similarity_score}/100</h3>
+                    <div style="background: #e5e7eb; border-radius: 10px; height: 10px; margin: 10px 0;">
+                        <div style="background: var(--${riskClass === 'high' ? 'danger' : riskClass === 'medium' ? 'warning' : 'secondary'}); 
+                                  height: 100%; width: ${metrics.similarity_score}%; border-radius: 10px;"></div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">${metrics.breakdown.exact_matches}</div>
+                        <div>Exact Matches</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${metrics.breakdown.page_matches}</div>
+                        <div>Page Matches</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--warning);">${metrics.breakdown.similar_matches}</div>
+                        <div>Similar Images</div>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Recommendation</h4>
+                    <p>${report.recommendation}</p>
+                </div>
+
+                ${domains.suspicious_domains.length > 0 ? `
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 10px;">
+                        <h4><i class="fas fa-shield-alt"></i> Domain Analysis</h4>
+                        <p>Found on ${domains.unique_domains} unique domains</p>
+                        <p style="color: var(--danger);">⚠️ Suspicious domains detected: ${domains.suspicious_domains.join(', ')}</p>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function displaySearchResults(results) {
+            if (!results || results.length === 0) {
+                resultsGrid.innerHTML = `
+                    <div class="result-card" style="grid-column: 1 / -1; text-align: center;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+                        <h3>No Matches Found</h3>
+                        <p>This image appears to be unique and authentic. No scam patterns detected.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsGrid.innerHTML = results.map(result => `
+                <div class="result-card">
+                    <span class="match-type type-${result.type.replace('_', '')}">
+                        ${result.type.replace('_', ' ').toUpperCase()}
+                    </span>
+                    <h4>${result.title}</h4>
+                    ${result.link ? `<p><a href="${result.link}" target="_blank" style="color: var(--primary); word-break: break-all;">${result.link}</a></p>` : ''}
+                    ${result.details ? `
+                        <div style="margin-top: 1rem; font-size: 0.9rem;">
+                            ${Object.entries(result.details).map(([key, value]) => 
+                                value && value !== 'Unknown' ? `<div><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</div>` : ''
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
